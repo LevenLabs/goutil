@@ -15,6 +15,7 @@ func main() {
 		fmt.Printf("Usage: %s <url> <service.method> <parameters>\n\n", bin)
 		fmt.Printf(`Example: %s 'http://localhost:5555/api' 'Foo.DoAThing' '{"foo":"bar"}'`, bin)
 		fmt.Print("\n\n")
+		return
 	}
 
 	u, method, body := argv[0], argv[1], argv[2]
