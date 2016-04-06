@@ -23,6 +23,10 @@ func main() {
 		Flag:        true,
 	})
 	l.Add(lever.Param{
+		Name:        "--llog-msg",
+		Description: "When --llog is set, this will override the log message being output",
+	})
+	l.Add(lever.Param{
 		Name:        "--pretty",
 		Description: "Prettify the returned JSON",
 		Flag:        true,
@@ -51,7 +55,11 @@ func main() {
 			llog.Error("return value not a json object, can't llog")
 			exit(1)
 		}
-		llog.Info("output from "+method, llog.KV(retm))
+		msg, _ := l.ParamStr("--llog-msg")
+		if msg == "" {
+			msg = "output from " + method
+		}
+		llog.Info(msg, llog.KV(retm))
 		exit(0)
 	}
 
