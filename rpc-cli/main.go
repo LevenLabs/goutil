@@ -22,6 +22,11 @@ func main() {
 		Description: "Instead of outputting the return as json, output a llog-style message with the returned json object as the key/value params",
 		Flag:        true,
 	})
+	l.Add(lever.Param{
+		Name:        "--pretty",
+		Description: "Prettify the returned JSON",
+		Flag:        true,
+	})
 	l.Parse()
 
 	argv := l.ParamRest()
@@ -50,7 +55,13 @@ func main() {
 		exit(0)
 	}
 
-	out, err := json.MarshalIndent(ret, "", "    ")
+	var out []byte
+
+	if l.ParamFlag("--pretty") {
+		out, err = json.MarshalIndent(ret, "", "    ")
+	} else {
+		out, err = json.Marshal(ret)
+	}
 	if err != nil {
 		llog.Error("error marshalling json", llog.KV{"err": err})
 		exit(1)
