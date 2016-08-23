@@ -2,6 +2,7 @@ package main
 
 import (
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -35,6 +36,10 @@ var ga = genapi.GenAPI{
 			Description: "Number of connections to make to --dst-okq-addr",
 			Default:     "10",
 		},
+		{
+			Name:        "--queues",
+			Description: "Names of queues to forward, comma separated. If none is set then all will be forwarded",
+		},
 	},
 }
 
@@ -67,6 +72,10 @@ var queueNames []string
 var queueNamesL sync.RWMutex
 
 func getQueueNames() ([]string, error) {
+	if namesRaw, _ := ga.Lever.ParamStr("--queues"); namesRaw != "" {
+		return strings.Split(namesRaw, ","), nil
+	}
+
 	qq, err := src.Status()
 	if err != nil {
 		return nil, err
