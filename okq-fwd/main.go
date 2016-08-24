@@ -106,6 +106,8 @@ func queueNamesChanged(names []string) bool {
 	return false
 }
 
+var countCh = make(chan bool, 1000)
+
 func main() {
 	ga.CLIMode()
 	srcAddr, _ := ga.ParamStr("--src-okq-addr")
@@ -143,6 +145,20 @@ func main() {
 		go forwarder(i)
 	}
 
+	go func() {
+		var c uint64
+		t := time.Tick(1 * time.Minute)
+		for {
+			select {
+			case <-countCh:
+				c++
+			case <-t:
+				llog.Info("events forwarded last minute", llog.KV{"total": c})
+				c = 0
+			}
+		}
+	}()
+
 	select {}
 }
 
@@ -155,6 +171,7 @@ func forwarder(i int) {
 			llog.Warn("error forwarding event", kv, ekv, llog.ErrKV(err))
 			return false
 		}
+		countCh <- true
 		return true
 	}
 
