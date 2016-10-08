@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/levenlabs/go-llog"
 	"github.com/levenlabs/go-srvclient"
@@ -53,6 +52,7 @@ func main() {
 		retm, ok := ret.(map[string]interface{})
 		if !ok {
 			llog.Error("return value not a json object, can't llog")
+			llog.Flush()
 			exit(1)
 		}
 		msg, _ := l.ParamStr("--llog-msg")
@@ -79,6 +79,6 @@ func main() {
 }
 
 func exit(i int) {
-	time.Sleep(100 * time.Millisecond)
+	llog.Flush()
 	os.Exit(i)
 }
