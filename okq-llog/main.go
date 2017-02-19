@@ -26,4 +26,5 @@ func main() {
 			"consumers":  s.Consumers,
 		})
 	}
+	llog.Flush()
 }
